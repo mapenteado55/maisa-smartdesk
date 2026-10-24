@@ -1,0 +1,6 @@
+{
+  "name": "MAISA SmartDesk",
+  "description": "Triagem e classificação inteligente de mensagens de clientes com Gemini IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
