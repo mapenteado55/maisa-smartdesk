@@ -1,37 +1,40 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# MAISA SmartDesk
 
-# MAISA SmartDesk — Assistente de Triagem Administrativa com IA
+Projeto didático do TANDER Bootcamp para triagem de mensagens com IA e validação humana.
 
-> **Projeto desenvolvido durante o TANDER BOOTCAMP A10X — ESPECIAL/LAB**
+## Arquitetura corrigida
 
----
+- Frontend: React + Vite
+- Produção na Vercel: frontend estático + Vercel Function em `api/analyze.ts`
+- Desenvolvimento local: `dev-server.ts` integra Express + Vite apenas localmente
+- IA: Gemini via variável `GEMINI_API_KEY`
+- Fallback: classificador local de demonstração, identificado explicitamente na interface
 
-### 👤 Informações de Desenvolvimento
-* **Responsável pelo Desenvolvimento:** Maísa Penteado
-* **Data:** 24 de Outubro de 2026
-* **Ambiente:** Google AI Studio (Gemini) + Node.js
+## Desenvolvimento local
 
----
+1. Instale dependências:
+   `npm install`
+2. Copie `.env.example` para `.env`.
+3. Preencha `GEMINI_API_KEY` em `.env`.
+4. Rode:
+   `npm run dev`
+5. Abra `http://localhost:3000`.
+6. Saúde da API local: `http://localhost:3000/api/health`.
 
-## 📌 Sobre o Projeto
-O **MAISA SmartDesk** é uma solução web responsiva desenvolvida para automatizar a triagem de mensagens e solicitações de clientes em ambientes administrativos.
+## Deploy na Vercel
 
-A ferramenta utiliza o poder do modelo **Gemini** para:
-- 🏷️ **Categorizar** a mensagem (`FINANCEIRO`, `SUPORTE`, `VENDAS`, `ADMINISTRATIVO`, `OUTROS`);
-- 🚨 **Atribuir Prioridade** (`ALTA`, `MÉDIA`, `BAIXA`);
-- 📝 **Gerar Resumo** objetivo em uma linha;
-- 💡 **Sugerir Próxima Ação** recomendada.
+1. Envie o projeto ao GitHub.
+2. Importe o repositório na Vercel.
+3. Framework Preset: Vite (também fixado em `vercel.json`).
+4. Em Settings > Environment Variables, crie `GEMINI_API_KEY` para Production e Preview.
+5. Faça novo deployment.
+6. Valide primeiro `/api/health` e depois a interface.
 
-> ⚠️ **Aviso de Responsabilidade:** *A IA recomenda; a decisão final permanece humana.*
+O endpoint `/api/analyze` é uma Vercel Function nativa; não depende de `server.ts`/Express no ambiente Vercel.
 
----
+## Segurança
 
-## 🚀 Como Executar Localmente
-
-**Pré-requisitos:** Node.js instalado.
-
-1. Instale as dependências:
-   ```bash
-   npm install
+- `.env` é ignorado pelo Git.
+- A chave Gemini permanece somente no servidor.
+- O frontend chama `/api/analyze` no mesmo domínio.
+- Use apenas mensagens fictícias no laboratório.

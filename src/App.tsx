@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Sparkles,
   ShieldCheck,
@@ -41,6 +41,8 @@ export interface AnalysisResult {
   sugestao_resposta?: string;
   originalMessage: string;
   timestamp: string;
+  engine?: 'GEMINI' | 'FALLBACK_DEMO';
+  warning?: string;
 }
 
 interface DemoSample {
@@ -102,11 +104,6 @@ export default function App() {
   const [overridePriority, setOverridePriority] = useState<Priority | null>(null);
   const [actionDone, setActionDone] = useState<boolean>(false);
 
-  // Initial analyze on mount with sample 0
-  useEffect(() => {
-    handleAnalyze(DEMO_SAMPLES[0].text, true);
-  }, []);
-
   const handleAnalyze = async (textToAnalyze?: string, isInitial = false) => {
     const text = (textToAnalyze !== undefined ? textToAnalyze : message).trim();
     if (!text) {
@@ -142,6 +139,8 @@ export default function App() {
         proxima_acao: data.proxima_acao,
         motivo_prioridade: data.motivo_prioridade,
         sugestao_resposta: data.sugestao_resposta,
+        engine: data.engine,
+        warning: data.warning,
         originalMessage: text,
         timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
       };
@@ -279,6 +278,7 @@ export default function App() {
       `• Prioridade: ${activePriority} ${overridePriority ? '(Ajustado pelo atendente)' : ''}\n` +
       `• Resumo: ${result.resumo}\n` +
       `• Próxima Ação: ${result.proxima_acao}\n` +
+      `• Motor: ${result.engine || 'NÃO INFORMADO'}\n` +
       `\n⚠️ "A IA recomenda; a decisão final é humana."`
     : '';
 
@@ -294,7 +294,7 @@ export default function App() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900">
-                  MAISA <span className="text-indigo-600">PENTEADO</span>
+                  MAISA <span className="text-indigo-600">SmartDesk</span>
                 </span>
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/60">
                   v1.0
@@ -442,7 +442,7 @@ export default function App() {
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Processando com Gemini...</span>
+                  <span>Processando análise...</span>
                 </>
               ) : (
                 <>
@@ -466,8 +466,22 @@ export default function App() {
                   </span>
                 </h2>
                 <p className="text-xs text-slate-500">
-                  Os 4 pilares de análise operacional gerados pelo modelo com validação humana.
+                  Os 4 pilares de análise operacional gerados com validação humana.
                 </p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span
+                    className={`inline-flex items-center px-2 py-1 rounded-md text-2xs font-bold border ${
+                      result.engine === 'GEMINI'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-amber-50 text-amber-800 border-amber-200'
+                    }`}
+                  >
+                    Motor: {result.engine === 'GEMINI' ? 'Gemini API' : 'Fallback Demo'}
+                  </span>
+                  {result.warning && (
+                    <span className="text-2xs text-amber-700">{result.warning}</span>
+                  )}
+                </div>
               </div>
 
               {/* Copy Full Triage Button */}
